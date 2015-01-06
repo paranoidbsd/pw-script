@@ -1,0 +1,6 @@
+# This is a comment line
+# Example hashes from http://openwall.info/wiki/john/sample-hashes
+root:::$2a$05$bvIG6Nmid91Mu9RcmmWZfO5HJIMCT8riNW0hEp8f6/FuA2/mHZFpe
+alice:%%PATH%%/authorized_keys.alice:wheel:$1$O3JMY.Tw$AdLnLjQ/5jXF9.MTp3gHv/
+bob:%%PATH%%/authorized_keys.bob:wheel operator:$6$zWwwXKNj$gLAOoZCjcr8p/.VgV/FkGC3NX7BsXys3KHYePfuIGMNjY83dVxugPYlxVg/evpcVEJLT/rSwZcDMlVVf/bhf.1
+malice::wheel,nobody,nogroup:rEK1ecacw.7.c
