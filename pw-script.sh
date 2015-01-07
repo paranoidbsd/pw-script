@@ -45,11 +45,18 @@ restore_stderr () {
   exec 2>&6 6>&-
 }
 
+# print error message to STDERR
+error () {
+  local _err=$1
+
+  printf '%s\n' "$_err" >&2
+}
+
 # root required
 check_uid () {
   if [ `id -u` -ne 0 ]; then
     restore_stderr
-    printf '%s\n' 'root access required.' >&2
+    error 'root access required.'
     exit EX_NOPERM
   fi
 }
@@ -75,7 +82,7 @@ resolve_specfile_path () {
 
   if [ -n "$_err" ]; then
     restore_stderr
-    printf '%s\n' "$_err" >&2
+    error "$_err"
     exit EX_NOINPUT
   fi
 }
@@ -104,7 +111,7 @@ check_tmp_writeable () {
 
   if [ -n "$_err" ]; then
     restore_stderr
-    printf '%s\n' "$_err" >&2
+    error "$_err"
     exit EX_CANTCREAT
   fi
 }
@@ -134,7 +141,7 @@ setup_altroot_etcdir () {
 
   if [ -n "$_err" ]; then
     restore_stderr
-    printf '%s\n' "$_err" >&2
+    error "$_err"
     exit EX_NOINPUT
   fi
 
@@ -150,7 +157,7 @@ setup_fifo () {
   if [ $? -ne 0 ]; then
     rmdir $_tmpd
     restore_stderr
-    printf '%s\n' "Error creating FIFO: ${_fifo:-'<undef>'}" >&2
+    error "Error creating FIFO: ${_fifo:-'<undef>'}"
     exit EX_CANTCREAT
   fi
   exec 5<>$_fifo
