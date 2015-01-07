@@ -35,13 +35,20 @@ EX_CANTCREAT=73
 EX_NOPERM=77
 _exit=$EX_OK
 
-# Save STDERR, then disable it
-exec 6>&2 2>/dev/null
+#
+save_and_disable_stderr () {
+  exec 6>&2 2>/dev/null
+}
+
+#
+restore_stderr () {
+  exec 2>&6 6>&-
+}
 
 # root required
 check_uid () {
   if [ `id -u` -ne 0 ]; then
-    exec 2>&6 6>&-
+    restore_stderr
     printf '%s\n' 'root access required.' >&2
     exit EX_NOPERM
   fi
@@ -67,7 +74,7 @@ resolve_specfile_path () {
   fi
 
   if [ -n "$_err" ]; then
-    exec 2>&6 6>&-
+    restore_stderr
     printf '%s\n' "$_err" >&2
     exit EX_NOINPUT
   fi
@@ -96,7 +103,7 @@ check_tmp_writeable () {
   fi
 
   if [ -n "$_err" ]; then
-    exec 2>&6 6>&-
+    restore_stderr
     printf '%s\n' "$_err" >&2
     exit EX_CANTCREAT
   fi
@@ -126,7 +133,7 @@ setup_altroot_etcdir () {
   fi
 
   if [ -n "$_err" ]; then
-    exec 2>&6 6>&-
+    restore_stderr
     printf '%s\n' "$_err" >&2
     exit EX_NOINPUT
   fi
@@ -142,7 +149,7 @@ setup_fifo () {
   mkfifo -m 600 $_fifo
   if [ $? -ne 0 ]; then
     rmdir $_tmpd
-    exec 2>&6 6>&-
+    restore_stderr
     printf '%s\n' "Error creating FIFO: ${_fifo:-'<undef>'}" >&2
     exit EX_CANTCREAT
   fi
@@ -289,6 +296,7 @@ manually_create_user_home () {
 }
 
 # Main
+save_and_disable_stderr
 check_uid
 resolve_specfile_path
 check_tmp_writeable
@@ -364,6 +372,6 @@ done < "$_specfile"
 # Close FIFO
 cleanup_fifo
 
-# Restore STDERR
-exec 2>&6 6>&-
+# Restore STDERR and close
+restore_stderr
 exit $_exit
