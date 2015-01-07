@@ -296,15 +296,10 @@ setup_altroot_etcdir
 : ${_etcdir:=''}
 setup_fifo
 
-while read _line; do
-  # skip comment lines, then extract data fields
-  case $_line in \#*) continue ;; esac
-  _m=${_line%:*}
-  _m=${_m#*:}
-  _user=${_line%%:*}
-  _key=${_m%:*}
-  _group=${_m#*:}
-  _hash=${_line##*:}
+# read and slice the datafile
+while IFS=: read _user _key _group _hash; do
+  # skip comment lines, where the # will end up in $_user
+  case $_user in \#*) continue ;; esac
 
   # Skip entries where username or hash is missing
   if [ -z "$_user" -o -z "$_hash" ]; then
