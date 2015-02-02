@@ -93,34 +93,36 @@ Example Workflow
 An example workflow for a custom mfsBSD could look like this:
 
 1. Generate a public/private keypair.
-```
-openssl genpkey \
-  -genparam \
-  -algorithm EC \
-  -pkeyopt ec_paramgen_curve:secp521r1 \
-  -out ecp.pem
-openssl genpkey \
-  -aes256 \
-  -paramfile ecp.pem \
-  -out priv.pem \
-  -outform PEM
-rm ecp.pem
-openssl ec \
-  -in priv.pem \
-  -pubout \
-  -out pub.pem
-```
+    ```
+    openssl genpkey \
+      -genparam \
+      -algorithm EC \
+      -pkeyopt ec_paramgen_curve:secp521r1 \
+      -out ecp.pem
+    openssl genpkey \
+      -aes256 \
+      -paramfile ecp.pem \
+      -out priv.pem \
+      -outform PEM
+    rm ecp.pem
+    openssl ec \
+      -in priv.pem \
+      -pubout \
+      -out pub.pem
+    ```
+    
 2. Create tarball containing a pw.conf if needed, the userspec
    file and the authorized keys files. Sign it with the created
    private key.
-```
-tar cJf datafile.txz ....
-openssl dgst \
-  -sha256 \
-  -sign priv.pem \
-  -out datafile.txz.sig \
-  datafile.txz
-```
+    ```
+    tar cJf datafile.txz ....
+    openssl dgst \
+      -sha256 \
+      -sign priv.pem \
+      -out datafile.txz.sig \
+      datafile.txz
+    ```
+    
 3. Put the tarball and the signature somewhere your mfsBSD can reach
    it. Put the public key in your mfsBSD (please do not put it next
    to the datafile and the signature on the webserver. If this
@@ -129,16 +131,17 @@ openssl dgst \
 4. From within your installation script, fetch the tarball and the
    signature. Verify it against the public key embedded in your
    image.
-```
-_tmpdir=`mktemp -d /tmp/XXXXX`
-fetch -o $_tmpdir/datafile.txz http://../datafile.txz
-fetch -o $_tmpdir/datafile.txz.sig http://../datafile.txz.sig
-openssl dgst \
-  -sha256 \
-  -verify pub.pem \
-  -signature $_tmpdir/datafile.txz.sig \
-  $_tmpdir/datafile.txz
-```
+    ```
+    _tmpdir=`mktemp -d /tmp/XXXXX`
+    fetch -o $_tmpdir/datafile.txz http://../datafile.txz
+    fetch -o $_tmpdir/datafile.txz.sig http://../datafile.txz.sig
+    openssl dgst \
+      -sha256 \
+      -verify pub.pem \
+      -signature $_tmpdir/datafile.txz.sig \
+      $_tmpdir/datafile.txz
+    ```
+    
 5. If the verification checks out, unpack the tarball. Copy the
    pw.conf into the new system. Create required tool groups referenced
    inside the userspec.
@@ -147,14 +150,14 @@ openssl dgst \
    must match the paths within the mfsBSD after unpacking the tarball.
    Therefor you must use some placeholder inside the specification
    that you can resolve for it to work with `mktemp`.
-```
-tar xf $_tmpdir/datafile.txz -C $_tmpdir
-cp $_tmpdir/pw.conf /mnt/etc/
-sed -E -I '' -e 's|%%PATH%%|'$_tmpdir'|' $_tmpdir/userspec
-pw -V /mnt groupadd -n ... -g ...
-pw-script.sh $_tmpdir/userspec /mnt
-rm -r $_tmpdir
-```
+    ```
+    tar xf $_tmpdir/datafile.txz -C $_tmpdir
+    cp $_tmpdir/pw.conf /mnt/etc/
+    sed -E -I '' -e 's|%%PATH%%|'$_tmpdir'|' $_tmpdir/userspec
+    pw -V /mnt groupadd -n ... -g ...
+    pw-script.sh $_tmpdir/userspec /mnt
+    rm -r $_tmpdir
+    ```
 
 Exit Codes
 ==========
