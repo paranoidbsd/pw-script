@@ -97,7 +97,7 @@ An example workflow for a custom mfsBSD could look like this:
     openssl genpkey \
       -genparam \
       -algorithm EC \
-      -pkeyopt ec_paramgen_curve:secp521r1 \
+      -pkeyopt ec_paramgen_curve:sect571k1 \
       -out ecp.pem
     openssl genpkey \
       -aes256 \
