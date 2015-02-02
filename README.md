@@ -39,6 +39,7 @@ order:
 * `TMPDIR`
 * `TMP`
 * `TEMP`
+
 The first variable that is set is chosen.
 
 Entries in the specification file where either username or password
