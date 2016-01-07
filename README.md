@@ -190,3 +190,13 @@ License
 =======
 
 2-Clause BSD.
+
+Note on FreeBSD11 after r283961
+===============================
+
+This script contains a quite painful section to manually create the
+user's home directory in the correct path offset. This is no longer
+necessary if your system has the new `pw -R` option introduced in
+r283961. Since this script is intended as an example, not functional
+tooling, it has so far not been adapted. If you plan an using
+functionality like this in production, I advise to switch to `pw -R`.
